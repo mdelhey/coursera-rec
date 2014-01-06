@@ -2,28 +2,36 @@
 ### Coursera - Intro to Recommender Systems
 ### Programming Assignment 1
 
-# Read in sample data
-df <- read.csv("sample_data.csv", header = FALSE)
-names(df) <- c("User.ID", "User.Key", "Movie.ID", "Rating")
+# Read in user and movie data
+ratings <- read.csv("ratings.csv", header = FALSE)
+movies <- read.csv("movies.csv", header = FALSE)
+names(ratings) <- c("User.ID", "Movie.ID", "Rating")
+names(movies) <- c("Movie.ID", "Movie.Title")
 
 simple_asc <- function(x, y) {
-    # (x and y) / x
-    x_rate <- which(!is.na(x))
-    y_rate <- which(!is.na(y))
-    
-    n_x <- length(x[!is.na(x)])
-    n_x_y <- length(intersect(x_rate, y_rate))
-    
+    # x: id's of users who rated movie X
+    # y: id's of users who rated movie Y
+    # score = (x and y) / x
+    n_x <- length(x)
+    n_x_y <- length(intersect(x, y))
     return(n_x_y / n_x)
 }
 
-advance_asc <- function(x, y) {
-    # ((x and y) / x) / ((!x and y) / !x)
+y <- ratings[ratings$Movie.ID == 603, ]$User.ID
+x <- ratings[ratings$Movie.ID == 11, ]$User.ID
+
+x1 <- ratings[ratings$Movie.ID == 11, ]$Rating
+y1 <- sapply(ratings$Rating, simple_asc, x)
+
+advance_asc <- function(x, y, users) {
+    # x: id's of users who rated movie X
+    # y: id's of users who rated movie Y
+    # score = ((x and y) / x) / ((!x and y) / !x)
     x_norate <- which(is.na(x))
     y_rate <- which(!is.na(y))
 
-    n_nox <- length(x[is.na(x)])
-    n_nox_y <- length(intersect(x_norate, y_rate))
+    n_nox <- nusers - length(x)
+    n_nox_y <- length(intersect(x_, y_rate))
 
     top <- simple_asc(x, y)
     bot <- n_nox_y / n_nox
